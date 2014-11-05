@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>A love letter to @anagramatron</title>
+	<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
+	<style>body { font-family: sans-serif; margin: 2em; background: #292F3B; max-width: 800px; }
+	h1 { color: #EEE; text-align: center; width: 100%; }
+	#tweet { opacity: 0; }
+	#other_tweet { display: none; }
+	#signature { position: absolute; bottom: 5px; right: 10px; color: #CCC; font-size: 12px; }
+	a:link, a:visited { color: white; text-decoration: none; }</style>
+	<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</head>
+<body>
+	<h1>I <i style="width: 1em; padding-left: 2px;" class="fa fa-heart"></i> @anagramatron</h1>
+	<audio autoplay loop src="music.mp3"></audio>
+	<div id="tweet"></div>
+	<div id="other_tweet"></div>
+	<div id="signature">A love letter to <a href="https://twitter.com/anagramatron">@anagramatron</a> from <a href="https://twitter.com/robinhouston">@robinhouston</a></div>
+	<script>
+	var TWEETS = [
+		["520658530626703360", "529433543185682432"],
+		["529664758212222976", "510707070148960256"],
+		["529829485106180096", "523120247377633280"],
+		["521443788036648961", "529727421147516928"],
+		["509161016299491328", "529680998724694016"],
+		["512453452719722496", "524181158591213568"],
+		["522383790539558912", "525851368192372738"],
+		["526171829841711105", "525380356443471872"],
+		["526445189616107520", "520402401216700416"],
+		["511126131706462209", "527148683498774528"]
+	];
+
+	var FADE_DURATION = 1000,
+	    LINGER_ON_FIRST = 1000,
+		SORT_DURATION = 1000,
+	    LINGER_ON_SECOND = 4000,
+	    DELAY_BETWEEN = 500;
+
+	function ease(t) {
+		if (t <= 0) return 0;
+		if (t >= 1) return 1;
+		var eased = 4*t*t*t;
+		if (t >= 0.5) eased += 12 * t * (1-t) - 3;
+		return eased;
+	}
+	var start = null, callback = null, fading_in = true, fade_duration = null, fade_elements = null;
+	function fadeStep(timestamp) {
+		if (start == null) start = timestamp;
+		var elapsed = timestamp - start;
+		var p = elapsed / fade_duration,
+		    v = ease(fading_in ? p : 1 - p);
+		for (var i=0; i < fade_elements.length; i++) {
+			fade_elements[i].style.opacity = v;
+		}
+		if (elapsed < fade_duration) window.requestAnimationFrame(fadeStep);
+		else {
+			start = null;
+			var callback_to_call = callback;
+			callback = null;
+			if (callback_to_call) callback_to_call();
+		}
+	}
+	function fadeIn(_callback, _duration, _elements) {
+		fadeInOut(true, _callback, _duration, _elements);
+	}
+	function fadeOut(_callback, _duration, _elements) {
+		fadeInOut(false, _callback, _duration, _elements);
+	}
+	function fadeInOut(_fading_in, _callback, _duration, _elements) {
+		if (typeof _duration == "undefined") _duration = FADE_DURATION;
+		if (typeof _elements == "undefined") _elements = [tweet];
+		if (start == null) {
+			callback = _callback;
+			fade_duration = _duration;
+			fade_elements = _elements;
+			fading_in = _fading_in;
+			window.requestAnimationFrame(fadeStep);
+		}
+	}
+
+	var i = 0;
+	function showNextPair() {
+		displayTweetPair(TWEETS[i], function() {
+			i = (i + 1) % TWEETS.length;
+			setTimeout(showNextPair, DELAY_BETWEEN);
+		});
+	}
+
+	function switchTweets(callback) {
+		var a = tweet.children[0].contentDocument,
+		    b = other_tweet.children[0].contentDocument;
+
+		var entry_title = a.querySelector(".e-entry-title"),
+		    header = a.querySelector(".header"),
+		    dateline = a.querySelector(".dateline"),
+		    footer = a.querySelector(".footer"),
+		    elements = [header, dateline, footer];
+
+		fadeOut(function() {
+			header.innerHTML = b.querySelector(".header").innerHTML;
+			dateline.innerHTML = b.querySelector(".dateline").innerHTML;
+			footer.innerHTML = b.querySelector(".footer").innerHTML;
+			anagram(entry_title, b.querySelector(".e-entry-title"), function() {
+				fadeIn(function() {
+					if (callback) callback();
+				}, SORT_DURATION, elements);
+			});
+		}, SORT_DURATION, elements);
+	}
+
+	function anagram(el, target, callback) {
+		var text = el.textContent,
+		    target_text = target.textContent;
+
+		var pos_by_letter = {};
+		target.style.position = "relative";
+		target.style.height = el.clientHeight + "px";
+		target.innerHTML = "";
+		el.style.position = "relative";
+		el.style.height = el.clientHeight + "px";
+		el.innerHTML = "";
+		var el_r = el.getBoundingClientRect();
+		var new_char_data = [];
+		for (var i=0; i < target_text.length; i++) {
+			var c = target_text.charAt(i);
+			var span = document.createElement("span");
+			span.textContent = c;
+			el.appendChild(span);
+			var lc = c.toLowerCase();
+			var r = span.getBoundingClientRect();
+			var letter_data = [r.left - el_r.left, r.top - el_r.top - 1, c];
+			if (lc.match(/^[a-z]$/)) {
+				if (!(lc in pos_by_letter)) pos_by_letter[lc] = [];
+				pos_by_letter[lc].push(letter_data);
+			}
+			else {
+				new_char_data.push(letter_data);
+			}
+		}
+
+		el.innerHTML = "";
+		var spans = [], rects = [];
+		for (i=0; i < text.length; i++) {
+			var c = text.charAt(i);
+			var span = document.createElement("span");
+			var lc = c.toLowerCase();
+			if (lc.match(/^[a-z]$/)) {
+				span.__target_pos__ = pos_by_letter[lc].shift();
+				span.textContent = span.__target_pos__[2];
+			} else {
+				span.textContent = c;
+			}
+			el.appendChild(span);
+			spans.push(span);
+			rects.push(span.getBoundingClientRect());
+		}
+		for (i=0; i<spans.length; i++) {
+			var span = spans[i], r = rects[i];
+			span.__start_pos__ = [r.left - el_r.left, r.top - el_r.top - 1];
+			span.style.position = "absolute";
+			span.style.left = (r.left - el_r.left) + "px";
+			span.style.top = (r.top - el_r.top - 1) + "px";
+		}
+		
+		var new_chars = [];
+		for (i=0; i<new_char_data.length; i++) {
+			var char_data = new_char_data[i];
+			var span = document.createElement("span");
+			span.textContent = char_data[2];
+			span.style.position = "absolute";
+			span.style.opacity = 0;
+			span.style.left = char_data[0] + "px";
+			span.style.top = char_data[1] + "px";
+			el.appendChild(span);
+			new_chars.push(span);
+		}
+		
+		var start = null;
+		function step(timestamp) {
+			if (start == null) start = timestamp;
+			var elapsed = timestamp - start;
+			var t = ease(elapsed / 500);
+			for (var i=0; i < spans.length; i++) {
+				var span = spans[i];
+				if (span.__target_pos__) {
+					span.style.left = (span.__start_pos__[0] + t * (span.__target_pos__[0] - span.__start_pos__[0])) + "px";
+					span.style.top = (span.__start_pos__[1] + t * (span.__target_pos__[1] - span.__start_pos__[1])) + "px";
+				}
+				else {
+					span.style.opacity = 1 - t;
+				}
+			}
+			for (i=0; i<new_chars.length; i++) {
+				new_chars[i].style.opacity = t;
+			}
+			
+			if (elapsed < 500) requestAnimationFrame(step);
+			else if (callback) callback();
+		}
+		requestAnimationFrame(step);
+	}
+
+	function displayTweetPair(pair, callback) {
+		tweet.innerHTML = other_tweet.innerHTML = "";
+		twttr.widgets.createTweet(pair[1], other_tweet);
+		twttr.widgets.createTweet(pair[0], tweet).then(function() {
+			document.getElementsByClassName("twitter-tweet")[0].style.margin = "10px auto";
+			fadeIn(function() {
+				setTimeout(function() {
+					switchTweets(function() {
+						setTimeout(function() {
+							fadeOut(callback);
+						}, LINGER_ON_SECOND);
+					})
+				}, LINGER_ON_FIRST);
+			});
+		});
+	}
+
+	twttr.ready(function () {
+		showNextPair();
+	});
+
+
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-56436682-1', 'auto');
+	ga('send', 'pageview');
+	</script>
+</body>
+</html>
