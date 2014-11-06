@@ -4,7 +4,8 @@
 	<meta charset="utf-8">
 	<title>A love letter to @anagramatron</title>
 	<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
-	<style>body { font-family: sans-serif; margin: 2em; background: #292F3B; width: 800px; }
+	<style>body { background: #55769F; margin: 0; }
+	#wrapper { font-family: sans-serif; padding: 2em; margin: 32px auto; background: #292F3B; width: 800px; height: 400px; position: relative; overflow: hidden; }
 	h1 { color: #EEE; text-align: center; width: 100%; margin-bottom: 48px; font-size: 32px; }
 	#tweet { opacity: 0; }
 	#other_tweet { display: none; }
@@ -13,11 +14,13 @@
 	<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body>
-	<h1>I <i style="width: 1em; padding-left: 0.1em;" class="fa fa-heart"></i> @anagramatron</h1>
-	<audio autoplay src="music.mp3"></audio>
-	<div id="tweet"></div>
-	<div id="other_tweet"></div>
-	<div id="signature">A love letter to <a href="https://twitter.com/anagramatron">@anagramatron</a> from <a href="https://twitter.com/robinhouston">@robinhouston</a></div>
+	<div id="wrapper">
+		<h1>I <i style="width: 1em; padding-left: 0.1em;" class="fa fa-heart"></i> @anagramatron</h1>
+		<audio autoplay src="music.mp3"></audio>
+		<div id="tweet"></div>
+		<div id="other_tweet"></div>
+		<div id="signature">A love letter to <a href="https://twitter.com/anagramatron">@anagramatron</a> from <a href="https://twitter.com/robinhouston">@robinhouston</a></div>
+	</div>
 	<script>
 	var TWEETS = [
 	// When you want to, there is a desire to → no it's the other way around sweetie.
