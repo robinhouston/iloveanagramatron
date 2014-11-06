@@ -4,8 +4,8 @@
 	<meta charset="utf-8">
 	<title>A love letter to @anagramatron</title>
 	<link rel="stylesheet" href="font-awesome-4.2.0/css/font-awesome.min.css">
-	<style>body { font-family: sans-serif; margin: 2em; background: #292F3B; max-width: 800px; }
-	h1 { color: #EEE; text-align: center; width: 100%; }
+	<style>body { font-family: sans-serif; margin: 2em; background: #292F3B; width: 800px; }
+	h1 { color: #EEE; text-align: center; width: 100%; margin-bottom: 48px; font-size: 32px; }
 	#tweet { opacity: 0; }
 	#other_tweet { display: none; }
 	#signature { position: absolute; bottom: 5px; right: 10px; color: #CCC; font-size: 12px; }
@@ -13,30 +13,45 @@
 	<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body>
-	<h1>I <i style="width: 1em; padding-left: 2px;" class="fa fa-heart"></i> @anagramatron</h1>
-	<audio autoplay loop src="music.mp3"></audio>
+	<h1>I <i style="width: 1em; padding-left: 0.1em;" class="fa fa-heart"></i> @anagramatron</h1>
+	<audio autoplay src="music.mp3"></audio>
 	<div id="tweet"></div>
 	<div id="other_tweet"></div>
 	<div id="signature">A love letter to <a href="https://twitter.com/anagramatron">@anagramatron</a> from <a href="https://twitter.com/robinhouston">@robinhouston</a></div>
 	<script>
 	var TWEETS = [
+	// When you want to, there is a desire to → no it's the other way around sweetie.
 		["520658530626703360", "529433543185682432"],
-		["529664758212222976", "510707070148960256"],
+	// I gotta find my needle → Definitely meant God
 		["529829485106180096", "523120247377633280"],
-		["521443788036648961", "529727421147516928"],
+	// People say im strange → Please ignore my past
+		["527095105090777088", "519069745111658496"],
+	// What a lovely \"boyfriend\" → i really have nobody.                                     wtf.
 		["509161016299491328", "529680998724694016"],
+	// Friends, I have not one. → And... The oven is on fire\ud83d\ude33\ud83d\udd25
 		["512453452719722496", "524181158591213568"],
+	// All they do is whisper. → I really wish he'd stop.
 		["522383790539558912", "525851368192372738"],
-		["526171829841711105", "525380356443471872"],
+	// all I want is to get my hair done :) → I'm not an easy girl to deal with
 		["526445189616107520", "520402401216700416"],
+	// The Game is over. And I won. → Swear to god I'm in heaven
 		["511126131706462209", "527148683498774528"]
+
+	// Shortest nap of my life → First of many lets hope\ud83d\ude4c
+		// ["521443788036648961", "529727421147516928"],
+	// Come all you sinners → "Can I smell your nose"
+		// ["529664758212222976", "510707070148960256"],
+	// still doing his homework → with his "smoldering look"
+		// ["526171829841711105", "525380356443471872"],
+	// all I want is to get my hair done :) → I'm not an easy girl to deal with
+		// ["526445189616107520", "520402401216700416"],
 	];
 
 	var FADE_DURATION = 1000,
-	    LINGER_ON_FIRST = 1000,
+	    LINGER_ON_FIRST = 2000,
 		SORT_DURATION = 1000,
-	    LINGER_ON_SECOND = 4000,
-	    DELAY_BETWEEN = 500;
+	    LINGER_ON_SECOND = 2000,
+	    DELAY_BETWEEN = 0;
 
 	function ease(t) {
 		if (t <= 0) return 0;
@@ -83,8 +98,13 @@
 	var i = 0;
 	function showNextPair() {
 		displayTweetPair(TWEETS[i], function() {
-			i = (i + 1) % TWEETS.length;
-			setTimeout(showNextPair, DELAY_BETWEEN);
+			i += 1;
+			if (i < TWEETS.length) {
+				setTimeout(showNextPair, DELAY_BETWEEN);
+			}
+			else {
+				setTimeout(finish, DELAY_BETWEEN);
+			}
 		});
 	}
 
@@ -110,9 +130,28 @@
 		}, SORT_DURATION, elements);
 	}
 
+	function extractText(el) {
+		var r = [];
+		var nodes = el.childNodes;
+		for (var i=0; i<nodes.length; i++) {
+			var node = nodes[i];
+			if (node.nodeType == 3) {
+				var str = node.nodeValue;
+				for (var j=0; j < node.length; j++) {
+					var c = str.charAt(j);
+					if (/[\uD800-\uDFFF]/.test(c)) c += str[++j];
+					r.push(c);
+				}
+			}
+			else r.push(node);
+		}
+		console.log("extractText", el, r);
+		return r;
+	}
+
 	function anagram(el, target, callback) {
-		var text = el.textContent,
-		    target_text = target.textContent;
+		var text = extractText(el),
+		    target_text = extractText(target);
 
 		var pos_by_letter = {};
 		target.style.position = "relative";
@@ -124,12 +163,16 @@
 		var el_r = el.getBoundingClientRect();
 		var new_char_data = [];
 		for (var i=0; i < target_text.length; i++) {
-			var c = target_text.charAt(i);
+			var c = target_text[i];
 			var span = document.createElement("span");
-			span.textContent = c;
+			if (typeof c == "string") {
+				span.textContent = c;
+			} else {
+				span.appendChild(c);
+			}
 			el.appendChild(span);
-			var lc = c.toLowerCase();
 			var r = span.getBoundingClientRect();
+			var lc = typeof c == "string" ? c.toLowerCase() : "";
 			var letter_data = [r.left - el_r.left, r.top - el_r.top - 1, c];
 			if (lc.match(/^[a-z]$/)) {
 				if (!(lc in pos_by_letter)) pos_by_letter[lc] = [];
@@ -143,14 +186,16 @@
 		el.innerHTML = "";
 		var spans = [], rects = [];
 		for (i=0; i < text.length; i++) {
-			var c = text.charAt(i);
+			var c = text[i];
 			var span = document.createElement("span");
-			var lc = c.toLowerCase();
+			var lc = typeof c == "string" ? c.toLowerCase() : "";
 			if (lc.match(/^[a-z]$/)) {
 				span.__target_pos__ = pos_by_letter[lc].shift();
 				span.textContent = span.__target_pos__[2];
-			} else {
+			} else if (typeof c == "string") {
 				span.textContent = c;
+			} else {
+				span.appendChild(c);
 			}
 			el.appendChild(span);
 			spans.push(span);
@@ -168,7 +213,12 @@
 		for (i=0; i<new_char_data.length; i++) {
 			var char_data = new_char_data[i];
 			var span = document.createElement("span");
-			span.textContent = char_data[2];
+			if (typeof char_data[2] == "string") {
+				span.textContent = char_data[2];
+			}
+			else {
+				span.appendChild(char_data[2]);
+			}
 			span.style.position = "absolute";
 			span.style.opacity = 0;
 			span.style.left = char_data[0] + "px";
@@ -202,21 +252,41 @@
 		requestAnimationFrame(step);
 	}
 
+	function doDisplay(callback) {
+		document.getElementsByClassName("twitter-tweet")[0].style.margin = "10px auto";
+		fadeIn(function() {
+			setTimeout(function() {
+				switchTweets(function() {
+					setTimeout(function() {
+						fadeOut(callback);
+					}, LINGER_ON_SECOND);
+				})
+			}, LINGER_ON_FIRST);
+		});
+	}
+
 	function displayTweetPair(pair, callback) {
 		tweet.innerHTML = other_tweet.innerHTML = "";
-		twttr.widgets.createTweet(pair[1], other_tweet);
+		var n = 0;
 		twttr.widgets.createTweet(pair[0], tweet).then(function() {
-			document.getElementsByClassName("twitter-tweet")[0].style.margin = "10px auto";
-			fadeIn(function() {
-				setTimeout(function() {
-					switchTweets(function() {
-						setTimeout(function() {
-							fadeOut(callback);
-						}, LINGER_ON_SECOND);
-					})
-				}, LINGER_ON_FIRST);
-			});
+			if (++n == 2) doDisplay(callback);
 		});
+		twttr.widgets.createTweet(pair[1], other_tweet).then(function() {
+			if (++n == 2) doDisplay(callback);
+		});
+	}
+
+	function finish() {
+		var start = null;
+		var h1 = document.querySelector("h1");
+		function step(timestamp) {
+			if (start == null) start = timestamp;
+			var elapsed = timestamp - start;
+			var t = ease(elapsed / 2000);
+			h1.style.transform = "scale(" + (1 + 1.5*t) + ") translate(0,"+(20*t)+"px)";
+			if (elapsed < 2000) requestAnimationFrame(step);
+		}
+		requestAnimationFrame(step);
 	}
 
 	twttr.ready(function () {
