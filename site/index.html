@@ -94,9 +94,11 @@
 
 	var FADE_DURATION = 1000,
 	    LINGER_ON_FIRST = 2000,
-		SORT_DURATION = 1000,
+	    SORT_FADE_DURATION = 500,
 	    LINGER_ON_SECOND = 2000,
-	    DELAY_BETWEEN = 0;
+	    DELAY_BETWEEN = 0,
+	    ANAGRAM_DURATION = 500,
+	    ANAGRAM_STAGGER = 10;
 
 	function ease(t) {
 		if (t <= 0) return 0;
@@ -170,9 +172,9 @@
 			anagram(entry_title, b.querySelector(".e-entry-title"), function() {
 				fadeIn(function() {
 					if (callback) callback();
-				}, SORT_DURATION, elements);
+				}, SORT_FADE_DURATION, elements);
 			});
-		}, SORT_DURATION, elements);
+		}, SORT_FADE_DURATION, elements);
 	}
 
 	function extractText(el) {
@@ -280,24 +282,25 @@
 		function step(timestamp) {
 			if (start == null) start = timestamp;
 			var elapsed = timestamp - start;
-			var t = ease(elapsed / 500);
+			var t = ease(elapsed / (ANAGRAM_DURATION + ANAGRAM_STAGGER * (spans.length - 1)));
 			el.style.height = (start_height + t * height_delta) + "px";
 			iframe.setAttribute("height", start_iframe_height + t * height_delta);
 			for (var i=0; i < spans.length; i++) {
+				var t_staggered = ease((elapsed - ANAGRAM_STAGGER*i) / ANAGRAM_DURATION);
 				var span = spans[i];
 				if (span.__target_pos__) {
-					span.style.left = (span.__start_pos__[0] + t * (span.__target_pos__[0] - span.__start_pos__[0])) + "px";
-					span.style.top = (span.__start_pos__[1] + t * (span.__target_pos__[1] - span.__start_pos__[1])) + "px";
+					span.style.left = (span.__start_pos__[0] + t_staggered * (span.__target_pos__[0] - span.__start_pos__[0])) + "px";
+					span.style.top = (span.__start_pos__[1] + t_staggered * (span.__target_pos__[1] - span.__start_pos__[1])) + "px";
 				}
 				else {
-					span.style.opacity = 1 - t;
+					span.style.opacity = 1 - t_staggered;
 				}
 			}
 			for (i=0; i<new_chars.length; i++) {
 				new_chars[i].style.opacity = t;
 			}
 			
-			if (elapsed < 500) requestAnimationFrame(step);
+			if (elapsed < ANAGRAM_DURATION + ANAGRAM_STAGGER * (spans.length - 1)) requestAnimationFrame(step);
 			else if (callback) callback();
 		}
 		requestAnimationFrame(step);
