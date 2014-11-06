@@ -72,6 +72,10 @@
 	// Swear to god I'm in heaven → The Game is over. And I won.
 		["527148683498774528", "511126131706462209"]
 
+	// This one is good for testing animation between two tweets of different height:
+		// ["528567855285956609", "520716319541706752"],
+
+
 	// People say im strange → Please ignore my past
 		// ["527095105090777088", "519069745111658496"],
 	// Friends, I have not one. → And... The oven is on fire\ud83d\ude33\ud83d\udd25
@@ -197,8 +201,8 @@
 		target.style.position = "relative";
 		target.style.height = el.clientHeight + "px";
 		target.innerHTML = "";
+		var start_height = el.getBoundingClientRect().height;
 		el.style.position = "relative";
-		el.style.height = el.clientHeight + "px";
 		el.innerHTML = "";
 		var el_r = el.getBoundingClientRect();
 		var new_char_data = [];
@@ -223,6 +227,8 @@
 			}
 		}
 
+		var height_delta = el.getBoundingClientRect().height - start_height;
+		el.style.height = start_height + "px";
 		el.innerHTML = "";
 		var spans = [], rects = [];
 		for (i=0; i < text.length; i++) {
@@ -266,12 +272,17 @@
 			el.appendChild(span);
 			new_chars.push(span);
 		}
-		
+
+		var iframe = tweet.children[0],
+		    start_iframe_height = parseInt(iframe.getAttribute("height"), 10);
+
 		var start = null;
 		function step(timestamp) {
 			if (start == null) start = timestamp;
 			var elapsed = timestamp - start;
 			var t = ease(elapsed / 500);
+			el.style.height = (start_height + t * height_delta) + "px";
+			iframe.setAttribute("height", start_iframe_height + t * height_delta);
 			for (var i=0; i < spans.length; i++) {
 				var span = spans[i];
 				if (span.__target_pos__) {
