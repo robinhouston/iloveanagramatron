@@ -10,13 +10,15 @@
 	#tweet { opacity: 0; }
 	#other_tweet { display: none; }
 	#signature { position: absolute; bottom: 5px; right: 10px; color: #CCC; font-size: 12px; }
-	a:link, a:visited { color: white; text-decoration: none; }</style>
+	a:link, a:visited { color: white; text-decoration: none; }
+	#play_button { width: 158px; height: 158px; position: absolute; background-image: url(play.png); background-repeat: no-repeat; cursor: pointer; left: 50%; margin-left: -75px; }
+	#play_button:hover { background-position: 0 -158px; }</style>
 	<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </head>
 <body>
 	<div id="wrapper">
 		<h1>I <i style="width: 1em; padding-left: 0.1em;" class="fa fa-heart"></i> @anagramatron</h1>
-		<audio autoplay src="music.mp3"></audio>
+		<audio id="music" src="music.mp3"></audio>
 		<div id="tweet"></div>
 		<div id="other_tweet"></div>
 		<div id="signature">A love letter to <a href="https://twitter.com/anagramatron">@anagramatron</a> from <a href="https://twitter.com/robinhouston">@robinhouston</a></div>
@@ -279,6 +281,16 @@
 		});
 	}
 
+	function showPlayButton() {
+		window.play_button = document.createElement("div");
+		play_button.id = "play_button";
+		play_button.addEventListener("click", function() {
+			wrapper.removeChild(play_button);
+			music.play();
+		}, false);
+		wrapper.appendChild(play_button);
+	}
+
 	function finish() {
 		var start = null;
 		var h1 = document.querySelector("h1");
@@ -292,10 +304,13 @@
 		requestAnimationFrame(step);
 	}
 
-	twttr.ready(function () {
+	music.addEventListener("play", function() {
 		showNextPair();
-	});
+	}, false);
 
+	twttr.ready(function () {
+		showPlayButton();
+	});
 
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
