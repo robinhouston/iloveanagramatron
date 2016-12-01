@@ -39,5 +39,8 @@ for status in tweepy.Cursor(api.user_timeline, screen_name="anagramatron").items
 
     if len(tweet_pairs) == N: break
 
+def nl(text):
+    return text.replace("\n", "\n\t//\t")
+
 for (a, b) in tweet_pairs:
-    print (u"\t// %s → %s\n\t\t[\"%s\", \"%s\"]," % (a[1], b[1], a[0], b[0])).encode("utf-8")
+    print (u"\t// %s → %s\n\t\t[\"%s\", \"%s\"]," % (nl(a[1]), nl(b[1]), a[0], b[0])).encode("utf-8")

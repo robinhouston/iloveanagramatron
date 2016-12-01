@@ -9,7 +9,7 @@
 	// My dream is to open a nail salon 🙇 → Sadly i am an emotional person. 🖕🏽
 		["688554376437362690", "736452107390361600"],
 	// remind 'em why you started → "My mouth's dry.
-I need water."
+	//	I need water."
 		["721163495954231296", "737859644786233344"],
 	// Damn can i get anymore hetero? → Eyeman = God in Man the Creator
 		["726172354863202304", "737876790954348544"],
@@ -52,7 +52,7 @@ I need water."
 	// time to rt whale stuff → *mutes half of twitter*
 		["729919604659625985", "737104938199719936"],
 	// Let your stars align ☆ → 🌊🐬
-You still a stranger
+	//	You still a stranger
 		["676155954967257088", "735278847462100992"],
 	// BUT ITS NOT THAT SIMPLEEE → I'm not the least bit upset
 		["710610253969133568", "735307695784263680"],
@@ -63,8 +63,8 @@ You still a stranger
 	// People say I whine a lot. → I always pee in the pool
 		["703057176529600512", "736004931891564545"],
 	// GET SOME ICE
-
-FOR THAT BURN → So much for eating better
+	//	
+	//	FOR THAT BURN → So much for eating better
 		["731160628178485248", "735432446850797570"],
 	// have some discipline → am so indecisive help
 		["730513769890078721", "735433445397004288"],
@@ -109,8 +109,8 @@ FOR THAT BURN → So much for eating better
 	// indeed, we can't please  everyone → We need love, peace and serenity
 		["722709403456118784", "732360098601959424"],
 	// Boom Head shot....
-
-Nailed it..😎😎😎 → In blood the oath is made.
+	//	
+	//	Nailed it..😎😎😎 → In blood the oath is made.
 		["721304802118897665", "732551664834486273"],
 	// Theres but so much i can give → vacuuming is the best chore
 		["700719393039323136", "731526887508320256"],
@@ -201,7 +201,7 @@ Nailed it..😎😎😎 → In blood the oath is made.
 	// I'm sorry, I'm not gonna do that. → im trying so hard not to moan
 		["707426341214355456", "727301465635708929"],
 	// Let Her Go 
-*in batman voice* → Love/hate being romantic.
+	//	*in batman voice* → Love/hate being romantic.
 		["721486113764978688", "727317018177761280"],
 	// I'm ending the conversation! → I can never do things on time 🙄
 		["680979291346202631", "727231458813693952"],
@@ -238,7 +238,7 @@ Nailed it..😎😎😎 → In blood the oath is made.
 	// Good morning time to party → Trying to get in a prom mood 🙄
 		["683137617119064069", "723673183103139840"],
 	// Relationship status:
-"Hey Pal" → I pray this plane has outlets 😩
+	//	"Hey Pal" → I pray this plane has outlets 😩
 		["712406779397808130", "724966970899189760"],
 	// I don't wanna be a alchy no more → Can we be lit on a Monday or nah
 		["711959695729287168", "724727756962029568"],
@@ -319,8 +319,8 @@ Nailed it..😎😎😎 → In blood the oath is made.
 	// Too busy for me? Ok go do you → You're out of my good books.
 		["699800370667745280", "717884720692879360"],
 	// $ git init
-
-Where it all begins → I'll be sitting here waiting
+	//	
+	//	Where it all begins → I'll be sitting here waiting
 		["693737143647223808", "717891641198116864"],
 	// Im late for this meeting :( → Time is not real fight me
 		["710246352173793280", "717475100497481730"],
@@ -451,7 +451,7 @@ Where it all begins → I'll be sitting here waiting
 	// Please come over and drink → Never asked or complained
 		["684230942370598912", "700453004466475008"],
 	// My heart was broken twice today. :( → On my way back to where I started!
-🙏🏽
+	//	🙏🏽
 		["699440495278198784", "700323962333609984"],
 	// All we can ever do is try. → I really want 🍫 covered 🍓's 👅
 		["694640147829231616", "699063867587088386"],
