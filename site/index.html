@@ -160,15 +160,15 @@
 		    b = other_tweet.children[0].contentDocument;
 
 		var entry_title = a.querySelector(".e-entry-title"),
-		    header = a.querySelector(".header"),
+		    header = a.querySelector(".Tweet-header"),
 		    dateline = a.querySelector(".dateline"),
-		    footer = a.querySelector(".footer"),
+		    footer = a.querySelector(".Tweet-actions"),
 		    elements = [header, dateline, footer];
 
 		fadeOut(function() {
-			header.innerHTML = b.querySelector(".header").innerHTML;
+			header.innerHTML = b.querySelector(".Tweet-header").innerHTML;
 			dateline.innerHTML = b.querySelector(".dateline").innerHTML;
-			footer.innerHTML = b.querySelector(".footer").innerHTML;
+			footer.innerHTML = b.querySelector(".Tweet-actions").innerHTML;
 			anagram(entry_title, b.querySelector(".e-entry-title"), function() {
 				fadeIn(function() {
 					if (callback) callback();
