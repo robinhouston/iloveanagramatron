@@ -4,6 +4,8 @@ from __future__ import division
 
 import datetime
 import json
+import re
+import sys
 
 import tweepy
 import tweepy.binder
@@ -19,21 +21,23 @@ api = tweepy.API(auth)
 
 epoch = datetime.datetime.utcfromtimestamp(0)
 
+def is_anagram(a, b):
+    return sorted(re.sub(r"[^a-z]", "", a.lower())) == sorted(re.sub(r"[^a-z]", "", b.lower()))
+
+N = int(sys.argv[1]) if len(sys.argv) > 1 else 10
+tweet_pairs = []
+prev_tweet = None
 for status in tweepy.Cursor(api.user_timeline, screen_name="anagramatron").items():
     if not hasattr(status, "retweeted_status"):
         continue
     
     s = status.retweeted_status
-    url = "https://twitter.com/{screen_name}/status/{id}".format(screen_name=s.user.screen_name, id=s.id_str)
-    print api.get_oembed(url=url)
-    break
-    
-    print json.dumps({
-        "url": url,
-        "screen_name": s.user.screen_name,
-        "name": s.user.name,
-        "text": s.text,
-        "created_at": (s.created_at - epoch).total_seconds(),
-    })
-    print
+    this_tweet = (s.id_str, s.text)
+    if prev_tweet is not None and is_anagram(this_tweet[1], prev_tweet[1]):
+        tweet_pairs.append((prev_tweet, this_tweet))
+    prev_tweet = this_tweet
 
+    if len(tweet_pairs) == N: break
+
+for (a, b) in tweet_pairs:
+    print (u"\t// %s → %s\n\t\t[\"%s\", \"%s\"]," % (a[1], b[1], a[0], b[0])).encode("utf-8")
